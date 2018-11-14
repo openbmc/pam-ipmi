@@ -237,7 +237,7 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
  * @param[in/out] tempfilename - tempfilename, which will be used in mkstemp.
  * @return - FILE handle for success. NULL for failure
  */
-FILE * get_temp_file_handle(const pam_handle_t *pamh, char * const tempfilename)
+FILE *get_temp_file_handle(const pam_handle_t *pamh, char *const tempfilename)
 {
 	FILE *tempfile = NULL;
 	int fd = -1;
@@ -299,10 +299,10 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	// Following steps are performed in this function.
 	// Step 1: Create a temporary file - always update temporary file, and
-	// then swap it with original one, only if everything succeded at the end.
-	// Step 2: If file already exists, read the old file and decrypt it in buffer
-	// Step 3: Copy user/password pair from old buffer to new buffer,
-	// and update, if the user already exists with the new password
+	// then swap it with original one, only if everything succeded at the
+	// end. Step 2: If file already exists, read the old file and decrypt it
+	// in buffer Step 3: Copy user/password pair from old buffer to new
+	// buffer, and update, if the user already exists with the new password
 	// Step 4: Encrypt the new buffer and write it to the temp file created
 	// at Step 1.
 	// Step 5. rename the temporary file name as special password file.
@@ -328,9 +328,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 	fclose(keyfile);
 
-	// Step 1: Try to create a temporary file, in which all the update will happen
-	// then it will be renamed to the original file. This is done to have
-	// atomic operation.
+	// Step 1: Try to create a temporary file, in which all the update will
+	// happen then it will be renamed to the original file. This is done to
+	// have atomic operation.
 	snprintf(tempfilename, sizeof(tempfilename), "%s__XXXXXX", filename);
 	pwfile = get_temp_file_handle(pamh, tempfilename);
 	if (pwfile == NULL) {
@@ -351,8 +351,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		memset(&st, 0, sizeof(st));
 		st.st_mode = 0x8000 | S_IRUSR;
 	}
-	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1) ||
-	    (fchmod(fileno(pwfile), st.st_mode) == -1)) {
+	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
+	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
 		if (opwfile != NULL) {
 			fclose(opwfile);
 		}
@@ -382,8 +382,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 				err = 1;
 				goto done;
 			}
-			// User & password pairs are mapped as <user name>:<password>\n.
-			// Add +3 for special chars ':', '\n' and '\0'.
+			// User & password pairs are mapped as <user
+			// name>:<password>\n. Add +3 for special chars ':',
+			// '\n' and '\0'.
 			pwptextlen = opwmp->datasize + forwholen + towhatlen + 3
 				     + EVP_CIPHER_block_size(cipher);
 			pwptext = malloc(pwptextlen);
@@ -407,18 +408,18 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 				if (encrypt_decrypt_data(
 					    pamh, 0, cipher, key, keylen,
 					    opwfilebuff + sizeof(*opwmp)
-					    + opwmp->hashsize,
+						    + opwmp->hashsize,
 					    opwmp->ivsize,
 					    opwfilebuff + sizeof(*opwmp)
-					    + opwmp->hashsize
-					    + opwmp->ivsize,
+						    + opwmp->hashsize
+						    + opwmp->ivsize,
 					    opwmp->datasize + opwmp->padsize,
 					    opwptext, &opwptextlen,
 					    opwfilebuff + sizeof(*opwmp)
-					    + opwmp->hashsize
-					    + opwmp->ivsize
-					    + opwmp->datasize
-					    + opwmp->padsize,
+						    + opwmp->hashsize
+						    + opwmp->ivsize
+						    + opwmp->datasize
+						    + opwmp->padsize,
 					    &opwmp->macsize)
 				    != 0) {
 					pam_syslog(pamh, LOG_DEBUG,
@@ -444,15 +445,15 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 				if ((!strncmp(linebuff, forwho, forwholen))
 				    && (linebuff[forwholen] == ':')) {
 					writtensize += snprintf(
-							       pwptext + writtensize,
-							       pwptextlen - writtensize,
-							       "%s:%s\n", forwho, towhat);
+						pwptext + writtensize,
+						pwptextlen - writtensize,
+						"%s:%s\n", forwho, towhat);
 					wroteentry = 1;
 				} else {
 					writtensize += snprintf(
-							       pwptext + writtensize,
-							       pwptextlen - writtensize,
-							       "%s\n", linebuff);
+						pwptext + writtensize,
+						pwptextlen - writtensize,
+						"%s\n", linebuff);
 				}
 				linebuff = strtok(NULL, "\n");
 			}
@@ -480,14 +481,15 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 
 	if (wroteentry) {
-		// user password pair already updated,  round it off as per the CIPHER block
+		// user password pair already updated,  round it off as per the
+		// CIPHER block
 		pwptextlen =
 			block_round(writtensize, EVP_CIPHER_block_size(cipher));
 		// memset the padding bytes
 		memset(pwptext + writtensize, 0, pwptextlen - writtensize);
 	} else {
-		// Write the new user:password pair at the end and round it off as per the
-		// CIPHER block.
+		// Write the new user:password pair at the end and round it off
+		// as per the CIPHER block.
 		writtensize += snprintf(pwptext + writtensize,
 					pwptextlen - writtensize, "%s:%s\n",
 					forwho, towhat);
@@ -699,13 +701,12 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 				spec_pass_file);
 		}
 		if (retval = lock_pwdf()) {
-			pam_syslog(
-				pamh, LOG_ERR,
-				"Failed to lock the passwd file");
+			pam_syslog(pamh, LOG_ERR,
+				   "Failed to lock the passwd file");
 			return retval;
 		}
 		retval = update_pass_special_file(
-				 pamh, key_file, spec_pass_file, user, pass_new);
+			pamh, key_file, spec_pass_file, user, pass_new);
 		unlock_pwdf();
 		return retval;
 	}
