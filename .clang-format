@@ -1,8 +1,8 @@
 ---
 BasedOnStyle: LLVM
-Language: C
+Language: Cpp
 IndentWidth: 8
-UseTab: Always
+UseTab: Never
 BreakBeforeBraces: Linux
 AlwaysBreakBeforeMultilineStrings: true
 AllowShortIfStatementsOnASingleLine: false

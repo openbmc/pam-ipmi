@@ -40,85 +40,85 @@
 
 
 static const char *get_option(const pam_handle_t *pamh, const char *option,
-			      int argc, const char **argv)
+                              int argc, const char **argv)
 {
-	int i = 0;
-	size_t len = strlen(option);
+        int i = 0;
+        size_t len = strlen(option);
 
-	for (i = 0; i < argc; ++i) {
-		if (strncmp(option, argv[i], len) == 0) {
-			if (argv[i][len] == '=') {
-				return &argv[i][len + 1];
-			}
-		}
-	}
-	return NULL;
+        for (i = 0; i < argc; ++i) {
+                if (strncmp(option, argv[i], len) == 0) {
+                        if (argv[i][len] == '=') {
+                                return &argv[i][len + 1];
+                        }
+                }
+        }
+        return NULL;
 }
 
 /* Password Management API's */
 
 int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
-	int retval = -1;
-	const void *item = NULL;
-	const char *user = NULL;
-	const char *pass_new = NULL, *pass_old = NULL;
-	const char *spec_grp_name =
-		get_option(pamh, "spec_grp_name", argc, argv);
+        int retval = -1;
+        const void *item = NULL;
+        const char *user = NULL;
+        const char *pass_new = NULL, *pass_old = NULL;
+        const char *spec_grp_name =
+                get_option(pamh, "spec_grp_name", argc, argv);
 
-	pam_syslog(pamh, LOG_DEBUG, "Special group name is %s", spec_grp_name);
+        pam_syslog(pamh, LOG_DEBUG, "Special group name is %s", spec_grp_name);
 
-	if (spec_grp_name == NULL) {
-		return PAM_IGNORE;
-	}
-	if (flags & PAM_PRELIM_CHECK) {
-		// send success to verify other stacked modules prelim check.
-		pam_syslog(pamh, LOG_DEBUG, "PRELIM_CHECK Called");
-		return PAM_SUCCESS;
-	}
+        if (spec_grp_name == NULL) {
+                return PAM_IGNORE;
+        }
+        if (flags & PAM_PRELIM_CHECK) {
+                // send success to verify other stacked modules prelim check.
+                pam_syslog(pamh, LOG_DEBUG, "PRELIM_CHECK Called");
+                return PAM_SUCCESS;
+        }
 
-	// Read new password.
-	// Note: Subsequent modules must use stacked password option use_authtok
-	retval = pam_get_authtok(pamh, PAM_AUTHTOK, &pass_new, NULL);
-	if (retval != PAM_SUCCESS) {
-		pam_syslog(pamh, LOG_ERR,
-			   "password - unable to get new password");
-		return retval;
-	}
+        // Read new password.
+        // Note: Subsequent modules must use stacked password option use_authtok
+        retval = pam_get_authtok(pamh, PAM_AUTHTOK, &pass_new, NULL);
+        if (retval != PAM_SUCCESS) {
+                pam_syslog(pamh, LOG_ERR,
+                           "password - unable to get new password");
+                return retval;
+        }
 
-	retval = pam_get_user(pamh, &user, NULL);
-	if (retval != PAM_SUCCESS) {
-		return retval;
-	}
+        retval = pam_get_user(pamh, &user, NULL);
+        if (retval != PAM_SUCCESS) {
+                return retval;
+        }
 
-	struct group *grp;
-	int spec_grp_usr = 0;
-	// Verify whether the user belongs to special group.
-	grp = pam_modutil_getgrnam(pamh, spec_grp_name);
-	if (grp != NULL) {
-		while (*(grp->gr_mem) != NULL) {
-			if (strcmp(user, *grp->gr_mem) == 0) {
-				spec_grp_usr = 1;
-				break;
-			}
-			(grp->gr_mem)++;
-		}
-	}
+        struct group *grp;
+        int spec_grp_usr = 0;
+        // Verify whether the user belongs to special group.
+        grp = pam_modutil_getgrnam(pamh, spec_grp_name);
+        if (grp != NULL) {
+                while (*(grp->gr_mem) != NULL) {
+                        if (strcmp(user, *grp->gr_mem) == 0) {
+                                spec_grp_usr = 1;
+                                break;
+                        }
+                        (grp->gr_mem)++;
+                }
+        }
 
-	if (spec_grp_usr) {
-		// verify the new password is acceptable.
-		if (strlen(pass_new) > MAX_SPEC_GRP_PASS_LENGTH
-		    || strlen(user) > MAX_SPEC_GRP_USER_LENGTH) {
-			pam_syslog(
-				pamh, LOG_ERR,
-				"Password length (%x) / User name length (%x) not acceptable",
-				strlen(pass_new), strlen(user));
-			pass_new = pass_old = NULL;
-			return PAM_NEW_AUTHTOK_REQD;
-		}
-	}
+        if (spec_grp_usr) {
+                // verify the new password is acceptable.
+                if (strlen(pass_new) > MAX_SPEC_GRP_PASS_LENGTH
+                    || strlen(user) > MAX_SPEC_GRP_USER_LENGTH) {
+                        pam_syslog(
+                                pamh, LOG_ERR,
+                                "Password length (%x) / User name length (%x) not acceptable",
+                                strlen(pass_new), strlen(user));
+                        pass_new = pass_old = NULL;
+                        return PAM_NEW_AUTHTOK_REQD;
+                }
+        }
 
-	return PAM_SUCCESS;
+        return PAM_SUCCESS;
 }
 
 /* end of module definition */
