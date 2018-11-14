@@ -240,7 +240,7 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 FILE *get_temp_file_handle(const pam_handle_t *pamh, char *const tempfilename)
 {
 	FILE *tempfile = NULL;
-	int fd = -1;
+	int fd;
 	int oldmask = umask(077);
 	fd = mkstemp(tempfilename);
 	if (fd == -1) {
