@@ -1,0 +1,8 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+2: Richard Marian Thomaiyar <richard.marian.thomaiyar@linux.intel.com>
+Submitted-by: Richard Marian Thomaiyar <richard.marian.thomaiyar@linux.intel.com>
+Submitted-at: Thu, 15 Nov 2018 01:02:47 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/15805
+Project: openbmc/pam-ipmi
+Branch: refs/heads/master
