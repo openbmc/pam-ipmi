@@ -1,6 +1,6 @@
 CLEANFILES = *~
 
-sysconf_DATA = key_file
+sysconf_DATA = key_file ipmi_pass
 securelibdir = /lib/security
 securelib_LTLIBRARIES = pam_ipmicheck.la pam_ipmisave.la
 
