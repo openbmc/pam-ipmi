@@ -16,6 +16,7 @@ AC_PROG_MAKE_SET
 
 AX_CHECK_OPENSSL([], [AC_MSG_ERROR(["openssl required and not found"])])
 PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [], AC_MSG_ERROR(["Requires libcrypto"]))
+AC_CHECK_LIB([pam], [pam_start], [], [AC_MSG_ERROR([libpam not found])])
 
 # Note: The following macro should work but doesn't fill out CRYPTO_LIBS as it should.
 #AX_LIB_CRYPTO(auto)
