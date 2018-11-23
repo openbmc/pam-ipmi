@@ -17,6 +17,10 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 AX_CHECK_OPENSSL([], [AC_MSG_ERROR(["openssl required and not found"])])
+PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [], AC_MSG_ERROR(["Requires libcrypto"]))
+
+# Note: The following macro should work but doesn't fill out CRYPTO_LIBS as it should.
+#AX_LIB_CRYPTO(auto)
 
 # Checks for library functions.
 LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot
