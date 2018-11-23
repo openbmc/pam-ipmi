@@ -3,6 +3,7 @@ BasedOnStyle: LLVM
 Language: Cpp
 IndentWidth: 8
 UseTab: Always
+ColumnLimit:     80
 BreakBeforeBraces: Linux
 AlwaysBreakBeforeMultilineStrings: true
 AllowShortIfStatementsOnASingleLine: false
