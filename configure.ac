@@ -17,6 +17,7 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 AX_CHECK_OPENSSL([], [AC_MSG_ERROR(["openssl required and not found"])])
+AC_CHECK_LIB([pam], [pam_start], [], [AC_MSG_ERROR([libpam not found])])
 
 # Checks for library functions.
 LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot
