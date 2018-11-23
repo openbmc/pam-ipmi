@@ -14,6 +14,8 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+AX_CHECK_OPENSSL([], [AC_MSG_ERROR(["openssl required and not found"])])
+
 # Checks for library functions.
 LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot
 

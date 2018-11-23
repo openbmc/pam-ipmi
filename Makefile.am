@@ -17,6 +17,6 @@ pam_ipmisave_la_LDFLAGS = \
 	-module \
 	-avoid-version \
 	-shared \
-	-lssl \
+	$(OPENSSL_LIBS) \
 	$(LIBPAM) \
 	$(LIBCRYPT)
