@@ -11,8 +11,7 @@ pam_ipmicheck_la_LDFLAGS = \
 	-module \
 	-avoid-version \
 	-shared \
-	$(LIBPAM) \
-	$(LIBCRYPT)
+	$(LIBPAM)
 
 pam_ipmisave_la_SOURCES = src/pam_ipmisave/pam_ipmisave.c
 pam_ipmisave_la_LDFLAGS = \
@@ -20,5 +19,4 @@ pam_ipmisave_la_LDFLAGS = \
 	-avoid-version \
 	-shared \
 	$(OPENSSL_LIBS) \
-	$(LIBPAM) \
-	$(LIBCRYPT)
+	$(LIBPAM)
