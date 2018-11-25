@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 CLEANFILES = *~
 
 sysconf_DATA = key_file
