@@ -41,8 +41,6 @@
 #define MAX_KEY_SIZE 8
 #define DEFAULT_SPEC_PASS_FILE "/etc/ipmi_pass"
 #define META_PASSWD_SIG "=OPENBMC="
-#define block_round(ODD, BLK)                                                  \
-	((ODD) + (((BLK) - ((ODD) & ((BLK)-1))) & ((BLK)-1)))
 
 /*
  * Meta data struct for storing the encrypted password file
@@ -480,24 +478,13 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		fclose(opwfile);
 	}
 
-	if (wroteentry) {
-		// user password pair already updated,  round it off as per the
-		// CIPHER block
-		pwptextlen =
-			block_round(writtensize, EVP_CIPHER_block_size(cipher));
-		// memset the padding bytes
-		memset(pwptext + writtensize, 0, pwptextlen - writtensize);
-	} else {
-		// Write the new user:password pair at the end and round it off
-		// as per the CIPHER block.
+	if (!wroteentry) {
+		// Write the new user:password pair at the end.
 		writtensize += snprintf(pwptext + writtensize,
 					pwptextlen - writtensize, "%s:%s\n",
 					forwho, towhat);
-		pwptextlen =
-			block_round(writtensize, EVP_CIPHER_block_size(cipher));
-		// memset the padding bytes
-		memset(pwptext + writtensize, 0, pwptextlen - writtensize);
 	}
+	pwptextlen = writtensize;
 
 	// Step 4: Encrypt the data and write to the temporary file
 	if (RAND_bytes(hash, EVP_MD_block_size(digest)) != 1) {
