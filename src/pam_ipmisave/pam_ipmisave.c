@@ -38,7 +38,8 @@
 
 #define MAX_SPEC_GRP_PASS_LENGTH 20
 #define MAX_SPEC_GRP_USER_LENGTH 16
-#define MAX_KEY_SIZE 8
+#define MAX_KEY_SIZE_OLD 9
+#define MAX_KEY_SIZE 16
 #define DEFAULT_SPEC_PASS_FILE "/etc/ipmi_pass"
 #define META_PASSWD_SIG "=OPENBMC="
 
@@ -274,10 +275,12 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	FILE *pwfile = NULL, *opwfile = NULL, *keyfile = NULL;
 	int err = 0, wroteentry = 0;
 	char tempfilename[1024];
+	char tempkeyfilename[1024];
 	size_t forwholen = strlen(forwho);
 	size_t towhatlen = strlen(towhat);
-	char keybuff[MAX_KEY_SIZE] = {0};
-	size_t keybuffsize = sizeof(keybuff);
+	char key_rd[MAX_KEY_SIZE];
+	char key_wr[MAX_KEY_SIZE];
+	size_t keybuffsize = sizeof(key_rd);
 
 	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
 	const EVP_MD *digest = EVP_sha256();
@@ -305,60 +308,104 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	// at Step 1.
 	// Step 5. rename the temporary file name as special password file.
 
+	// Step 0: Try to create a temporary file that will contain the new key
 	// verify the tempfilename buffer is enough to hold
-	// filename_XXXXXX (+1 for null).
-	if (strlen(filename)
-	    > (sizeof(tempfilename) - strlen("__XXXXXX") - 1)) {
+	// keyfilename_XXXXXX (+1 for null).
+	if (strlen(keyfilename)
+	    > (sizeof(tempkeyfilename) - strlen("_XXXXXX") - 1)) {
 		pam_syslog(pamh, LOG_DEBUG, "Not enough buffer, bailing out");
 		return PAM_AUTHTOK_ERR;
+	}
+	snprintf(tempkeyfilename, sizeof(tempkeyfilename), "%s_XXXXXX",
+		 keyfilename);
+	keyfile = get_temp_file_handle(pamh, tempkeyfilename);
+	if (keyfile == NULL) {
+		err = 1;
+		goto done;
+	}
+	if (fchmod(fileno(keyfile), S_IRUSR | S_IWUSR) == -1) {
+		fclose(keyfile);
+		err = 1;
+		goto done;
+	}
+	// generate a new key for writing
+	if (RAND_bytes(key_wr, sizeof(key_wr)) != 1) {
+		pam_syslog(pamh, LOG_DEBUG,
+			   "Hash genertion failed, bailing out");
+		err = 1;
+		goto done;
+	}
+	if (fwrite(key_wr, 1, sizeof(key_wr), keyfile) == -1) {
+		fclose(keyfile);
+		err = 1;
+		goto done;
+	}
+	if (fflush(keyfile) || fsync(fileno(keyfile))) {
+		pam_syslog(
+			pamh, LOG_DEBUG,
+			"fflush or fsync error writing new key to key_file: %s",
+			tempkeyfilename);
+		err = 1;
+		fclose(keyfile);
+		goto done;
+	}
+	fclose(keyfile);
+
+	// verify the tempfilename buffer is enough to hold
+	// filename_XXXXXX (+1 for null).
+	if (strlen(filename) > (sizeof(tempfilename) - strlen("_XXXXXX") - 1)) {
+		pam_syslog(pamh, LOG_DEBUG, "Not enough buffer, bailing out");
+		err = 1;
+		goto done;
 	}
 	// Fetch the key from key file name.
 	keyfile = fopen(keyfilename, "r");
 	if (keyfile == NULL) {
 		pam_syslog(pamh, LOG_DEBUG, "Unable to open key file %s",
 			   keyfilename);
-		return PAM_AUTHTOK_ERR;
+		err = 1;
+		goto done;
 	}
-	if (fread(keybuff, 1, keybuffsize, keyfile) != keybuffsize) {
+	if ((keybuffsize = fread(key_rd, 1, keybuffsize, keyfile)) == 0) {
 		pam_syslog(pamh, LOG_DEBUG, "Key file read failed");
 		fclose(keyfile);
-		return PAM_AUTHTOK_ERR;
+		err = 1;
+		goto done;
+	}
+	if (keybuffsize == MAX_KEY_SIZE_OLD) {
+		key_rd[--keybuffsize] = 0;
 	}
 	fclose(keyfile);
 
 	// Step 1: Try to create a temporary file, in which all the update will
 	// happen then it will be renamed to the original file. This is done to
 	// have atomic operation.
-	snprintf(tempfilename, sizeof(tempfilename), "%s__XXXXXX", filename);
+	snprintf(tempfilename, sizeof(tempfilename), "%s_XXXXXX", filename);
 	pwfile = get_temp_file_handle(pamh, tempfilename);
 	if (pwfile == NULL) {
 		err = 1;
 		goto done;
 	}
 
-	// Update temporary file stat by reading the special password file
-	opwfile = fopen(filename, "r");
-	if (opwfile != NULL) {
-		if (fstat(fileno(opwfile), &st) == -1) {
-			fclose(opwfile);
-			fclose(pwfile);
-			err = 1;
-			goto done;
-		}
-	} else { // Create with this settings if file is not present.
-		memset(&st, 0, sizeof(st));
-		st.st_mode = 0x8000 | S_IRUSR;
-	}
-	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
-	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
-		if (opwfile != NULL) {
-			fclose(opwfile);
-		}
+	// Update temporary file stat to be RW by owner
+	if (fchmod(fileno(pwfile), S_IRUSR | S_IWUSR) == -1) {
 		fclose(pwfile);
 		err = 1;
 		goto done;
 	}
-	opwfilesize = st.st_size;
+
+	opwfile = fopen(filename, "r");
+	if (opwfile != NULL) {
+		if (fstat(fileno(opwfile), &st) == -1) {
+			fclose(pwfile);
+			fclose(opwfile);
+			err = 1;
+			goto done;
+		}
+		opwfilesize = st.st_size;
+	} else {
+		opwfilesize = 0;
+	}
 
 	// Step 2: Read existing special password file and decrypt the data.
 	if (opwfilesize) {
@@ -396,7 +443,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			}
 
 			// First get the hashed key to decrypt
-			HMAC(digest, keybuff, keybuffsize,
+			HMAC(digest, key_rd, keybuffsize,
 			     opwfilebuff + sizeof(*opwmp), opwmp->hashsize, key,
 			     &keylen);
 
@@ -497,8 +544,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 
 	// Generate hash key, which will be used for encryption.
-	HMAC(digest, keybuff, keybuffsize, hash, EVP_MD_block_size(digest), key,
-	     &keylen);
+	HMAC(digest, key_wr, sizeof(key_wr), hash, EVP_MD_block_size(digest),
+	     key, &keylen);
 	// Generate IV values
 	if (RAND_bytes(iv, EVP_CIPHER_iv_length(cipher)) != 1) {
 		pam_syslog(pamh, LOG_DEBUG,
@@ -583,7 +630,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 done:
 	if (!err) {
 		// Step 5: Rename the temporary file as special password file.
-		if (!rename(tempfilename, filename)) {
+		if (!rename(tempkeyfilename, keyfilename)
+		    && !rename(tempfilename, filename)) {
 			pam_syslog(pamh, LOG_DEBUG,
 				   "password changed for %s in special file",
 				   forwho);
@@ -593,12 +641,14 @@ done:
 	}
 
 	// Clear out the key buff.
-	memset(keybuff, 0, keybuffsize);
+	memset(key_rd, 0, sizeof(key_rd));
+	memset(key_wr, 0, sizeof(key_wr));
 
 	if (!err) {
 		return PAM_SUCCESS;
 	} else {
 		unlink(tempfilename);
+		unlink(tempkeyfilename);
 		return PAM_AUTHTOK_ERR;
 	}
 }
