@@ -38,7 +38,8 @@
 
 #define MAX_SPEC_GRP_PASS_LENGTH 20
 #define MAX_SPEC_GRP_USER_LENGTH 16
-#define MAX_KEY_SIZE 8
+#define MAX_KEY_SIZE 32
+#define OLD_MAX_KEY_SIZE 8
 #define DEFAULT_SPEC_PASS_FILE "/etc/ipmi_pass"
 #define META_PASSWD_SIG "=OPENBMC="
 #define MODE_MASK (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)
@@ -279,6 +280,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	size_t towhatlen = strlen(towhat);
 	char keybuff[MAX_KEY_SIZE] = {0};
 	size_t keybuffsize = sizeof(keybuff);
+	int need_MAC = 0;
 
 	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
 	const EVP_MD *digest = EVP_sha256();
@@ -316,28 +318,43 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	// Fetch the key from key file name.
 	keyfile = fopen(keyfilename, "r");
 	if (keyfile == NULL) {
-		pam_syslog(pamh, LOG_DEBUG, "Unable to open key file %s",
-			   keyfilename);
-		return PAM_AUTHTOK_ERR;
-	}
-	if (fstat(fileno(keyfile), &st) == -1) {
-		pam_syslog(pamh, LOG_DEBUG, "Unable to open key file %s",
-			   keyfilename);
-		fclose(keyfile);
-		return PAM_AUTHTOK_ERR;
-	}
-	if ((st.st_mode & MODE_MASK) != (S_IRUSR | S_IWUSR)) {
-		if (fchmod(fileno(keyfile), S_IRUSR | S_IWUSR) < 0) {
-			fclose(keyfile);
+		keyfile = fopen("/etc/machine-id", "r");
+		if (keyfile == NULL) {
+			pam_syslog(pamh, LOG_DEBUG,
+				   "Unable to open key file %s", keyfilename);
 			return PAM_AUTHTOK_ERR;
 		}
+		need_MAC = 1;
+	} else {
+		if (fstat(fileno(keyfile), &st) == -1) {
+		}
+		if ((st.st_mode & MODE_MASK) != (S_IRUSR | S_IWUSR)) {
+			if (fchmod(fileno(keyfile), S_IRUSR | S_IWUSR) < 0) {
+				fclose(keyfile);
+				return PAM_AUTHTOK_ERR;
+			}
+		}
 	}
-	if (fread(keybuff, 1, keybuffsize, keyfile) != keybuffsize) {
+	keybuffsize = fread(keybuff, 1, keybuffsize, keyfile);
+	fclose(keyfile);
+	if (keybuffsize <= 0) {
 		pam_syslog(pamh, LOG_DEBUG, "Key file read failed");
-		fclose(keyfile);
 		return PAM_AUTHTOK_ERR;
 	}
-	fclose(keyfile);
+	if (need_MAC) {
+		// use a derivative of /etc/machine-id as the key
+		const uint8_t app_id[] = {0x48, 0xf5, 0xa9, 0x53, 0x0f, 0x4c,
+					  0x5f, 0xea, 0x46, 0xd1, 0xbf, 0x8a,
+					  0x36, 0x73, 0x57, 0x5a};
+		HMAC(digest, keybuff, keybuffsize, app_id, sizeof(app_id),
+		     keybuff, &keybuffsize);
+	} else {
+		if (keybuffsize == (OLD_MAX_KEY_SIZE + 1)
+		    && keybuff[keybuffsize - 1] == '\n') {
+			// remove the legacy '\n' from the key
+			keybuff[--keybuffsize] = 0;
+		}
+	}
 
 	// Step 1: Try to create a temporary file, in which all the update will
 	// happen then it will be renamed to the original file. This is done to
@@ -349,7 +366,13 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		goto done;
 	}
 
-	// Update temporary file stat by reading the special password file
+	// Update temporary file stat to be RW by owner
+	if (fchmod(fileno(pwfile), S_IRUSR | S_IWUSR) == -1) {
+		fclose(pwfile);
+		err = 1;
+		goto done;
+	}
+
 	opwfile = fopen(filename, "r");
 	if (opwfile != NULL) {
 		if (fstat(fileno(opwfile), &st) == -1) {
@@ -358,21 +381,10 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			err = 1;
 			goto done;
 		}
-	} else { // Create with this settings if file is not present.
-		memset(&st, 0, sizeof(st));
+		opwfilesize = st.st_size;
+	} else {
+		opwfilesize = 0;
 	}
-	// Override the file permission with S_IWUSR | S_IRUSR
-	st.st_mode = S_IWUSR | S_IRUSR;
-	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
-	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
-		if (opwfile != NULL) {
-			fclose(opwfile);
-		}
-		fclose(pwfile);
-		err = 1;
-		goto done;
-	}
-	opwfilesize = st.st_size;
 
 	// Step 2: Read existing special password file and decrypt the data.
 	if (opwfilesize) {
@@ -607,7 +619,7 @@ done:
 	}
 
 	// Clear out the key buff.
-	memset(keybuff, 0, keybuffsize);
+	memset(keybuff, 0, sizeof(keybuff));
 
 	if (!err) {
 		return PAM_SUCCESS;
