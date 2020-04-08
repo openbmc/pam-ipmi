@@ -271,7 +271,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			     const char *towhat)
 {
 	struct stat st;
-	FILE *pwfile = NULL, *opwfile = NULL, *keyfile = NULL;
+	FILE *pwfile = NULL, *opwfile = NULL, *keyfile = NULL,
+	     *tempkeyfile = NULL;
 	int err = 0, wroteentry = 0;
 	char tempfilename[1024];
 	size_t forwholen = strlen(forwho);
@@ -319,12 +320,64 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			   keyfilename);
 		return PAM_AUTHTOK_ERR;
 	}
+
 	if (fread(keybuff, 1, keybuffsize, keyfile) != keybuffsize) {
 		pam_syslog(pamh, LOG_DEBUG, "Key file read failed");
 		fclose(keyfile);
 		return PAM_AUTHTOK_ERR;
 	}
-	fclose(keyfile);
+
+	if (fstat(fileno(keyfile), &st) == -1) {
+		pam_syslog(pamh, LOG_DEBUG, "Unable to open key file %s",
+			   keyfilename);
+		fclose(keyfile);
+		return PAM_AUTHTOK_ERR;
+	}
+
+	// Update keyfile permission, if it is not S_IRUSR | S_IWUSR
+	if (st.st_mode != S_IRUSR | S_IWUSR) {
+		snprintf(tempfilename, sizeof(tempfilename), "%s__XXXXXX",
+			 keyfilename);
+		tempkeyfile = get_temp_file_handle(pamh, tempfilename);
+		if (tempkeyfile == NULL
+		    || (fchmod(fileno(tempkeyfile), st.st_mode) == -1)) {
+			if (tempkeyfile) {
+				fclose(tempkeyfile);
+			}
+			fclose(keyfile);
+			pam_syslog(pamh, LOG_DEBUG,
+				   "Unable to change key_file permissions");
+			return PAM_AUTHTOK_ERR;
+		}
+		if (fwrite(keybuff, 1, keybuffsize, tempkeyfile)
+		    != keybuffsize) {
+			pam_syslog(pamh, LOG_DEBUG,
+				   "Temp key file write failed");
+			fclose(tempkeyfile);
+			fclose(keyfile);
+			unlink(tempfilename);
+			return PAM_AUTHTOK_ERR;
+		}
+		if (fflush(tempkeyfile) || fsync(fileno(tempkeyfile))) {
+			pam_syslog(
+				pamh, LOG_DEBUG,
+				"fflush or fsync error writing entries to special file: %s",
+				tempfilename);
+			fclose(tempkeyfile);
+			fclose(keyfile);
+			unlink(tempfilename);
+			return PAM_AUTHTOK_ERR;
+		}
+		fclose(tempkeyfile);
+		fclose(keyfile);
+		if (rename(tempfilename, keyfilename)) {
+			pam_syslog(pamh, LOG_DEBUG,
+				   "Temp key file rename failed");
+			unlink(tempfilename);
+		}
+	} else {
+		fclose(keyfile);
+	}
 
 	// Step 1: Try to create a temporary file, in which all the update will
 	// happen then it will be renamed to the original file. This is done to
@@ -347,8 +400,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		}
 	} else { // Create with this settings if file is not present.
 		memset(&st, 0, sizeof(st));
-		st.st_mode = 0x8000 | S_IRUSR;
 	}
+	// Override the file permission with S_IWUSR | S_IRUSR
+	st.st_mode = S_IWUSR | S_IRUSR;
 	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
 	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
 		if (opwfile != NULL) {
