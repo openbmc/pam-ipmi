@@ -347,8 +347,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		}
 	} else { // Create with this settings if file is not present.
 		memset(&st, 0, sizeof(st));
-		st.st_mode = 0x8000 | S_IRUSR;
 	}
+	// Override the file permission with S_IWUSR | S_IRUSR
+	st.st_mode = S_IWUSR | S_IRUSR;
 	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
 	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
 		if (opwfile != NULL) {
