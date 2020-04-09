@@ -41,6 +41,7 @@
 #define MAX_KEY_SIZE 8
 #define DEFAULT_SPEC_PASS_FILE "/etc/ipmi_pass"
 #define META_PASSWD_SIG "=OPENBMC="
+#define MODE_MASK (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)
 
 /*
  * Meta data struct for storing the encrypted password file
@@ -319,6 +320,18 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			   keyfilename);
 		return PAM_AUTHTOK_ERR;
 	}
+	if (fstat(fileno(keyfile), &st) == -1) {
+		pam_syslog(pamh, LOG_DEBUG, "Unable to open key file %s",
+			   keyfilename);
+		fclose(keyfile);
+		return PAM_AUTHTOK_ERR;
+	}
+	if ((st.st_mode & MODE_MASK) != (S_IRUSR | S_IWUSR)) {
+		if (fchmod(fileno(keyfile), S_IRUSR | S_IWUSR) < 0) {
+			fclose(keyfile);
+			return PAM_AUTHTOK_ERR;
+		}
+	}
 	if (fread(keybuff, 1, keybuffsize, keyfile) != keybuffsize) {
 		pam_syslog(pamh, LOG_DEBUG, "Key file read failed");
 		fclose(keyfile);
@@ -347,8 +360,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		}
 	} else { // Create with this settings if file is not present.
 		memset(&st, 0, sizeof(st));
-		st.st_mode = 0x8000 | S_IRUSR;
 	}
+	// Override the file permission with S_IWUSR | S_IRUSR
+	st.st_mode = S_IWUSR | S_IRUSR;
 	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
 	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
 		if (opwfile != NULL) {
