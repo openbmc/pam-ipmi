@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 CLEANFILES = *~
 
 sysconf_DATA = key_file ipmi_pass
-install-data-hook:
+install-exec-hook:
 	chmod 0600 $(DESTDIR)$(sysconfdir)/key_file
 	chmod 0600 $(DESTDIR)$(sysconfdir)/ipmi_pass
 
