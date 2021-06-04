@@ -12,6 +12,7 @@ AC_SUBST(VERSION)
 
 # Checks for programs
 AM_PROG_AR
+AM_CONDITIONAL(HOST_IS_AARCH64, [test x"$host" = xaarch64-openbmc-linux])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
