@@ -2,8 +2,12 @@ ACLOCAL_AMFLAGS = -I m4
 
 CLEANFILES = *~
 
-sysconf_DATA = key_file ipmi_pass
+sysconf_DATA = key_file ipmi_pass ipmi_pass_64
+
 install-exec-hook:
+if HOST_IS_AARCH64
+	mv $(DESTDIR)$(sysconfdir)/ipmi_pass_64 $(DESTDIR)$(sysconfdir)/ipmi_pass
+endif
 	chmod 0600 $(DESTDIR)$(sysconfdir)/key_file
 	chmod 0600 $(DESTDIR)$(sysconfdir)/ipmi_pass
 
