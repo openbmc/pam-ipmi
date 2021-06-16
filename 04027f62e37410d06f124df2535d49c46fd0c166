@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "462aed6b_2e7da5c0",
+        "filename": "Makefile.am",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000343
+      },
+      "writtenOn": "2021-06-16T08:05:00Z",
+      "side": 1,
+      "message": "sysconf_DATA could not be placed inside an if-endif, so I remove ipmi_pass_64 when $host is not  aarch64",
+      "parentUuid": "05fc5e21_7cbda514",
+      "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "73e8fa01_01231502",
         "filename": "Makefile.am",
         "patchSetId": 1
