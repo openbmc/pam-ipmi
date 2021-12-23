@@ -106,15 +106,28 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 	}
 
 	if (spec_grp_usr) {
-		// verify the new password is acceptable.
-		if (strlen(pass_new) > MAX_SPEC_GRP_PASS_LENGTH
-		    || strlen(user) > MAX_SPEC_GRP_USER_LENGTH) {
-			pam_syslog(
-				pamh, LOG_ERR,
-				"Password length (%x) / User name length (%x) not acceptable",
-				strlen(pass_new), strlen(user));
+		if (strlen(user) > MAX_SPEC_GRP_USER_LENGTH) {
+			pam_syslog(pamh, LOG_ERR,
+				   "User name length (%x) is not acceptable",
+				   strlen(user));
+			pam_error(pamh,
+				  "BAD USERNAME: exceeds the max length (%d) "
+				  "supported by IPMI",
+				  MAX_SPEC_GRP_USER_LENGTH);
 			pass_new = pass_old = NULL;
-			return PAM_NEW_AUTHTOK_REQD;
+			return PAM_AUTHTOK_ERR;
+		}
+		// verify the new password is acceptable.
+		if (strlen(pass_new) > MAX_SPEC_GRP_PASS_LENGTH) {
+			pam_syslog(pamh, LOG_ERR,
+				   "Password length (%x) is not acceptable",
+				   strlen(pass_new));
+			pass_new = pass_old = NULL;
+			pam_error(pamh,
+				  "BAD PASSWORD: exceeds the max length (%d) "
+				  "supported by IPMI",
+				  MAX_SPEC_GRP_PASS_LENGTH);
+			return PAM_AUTHTOK_ERR;
 		}
 	}
 
