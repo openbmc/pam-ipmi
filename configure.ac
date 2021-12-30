@@ -9,9 +9,22 @@ AM_SILENT_RULES([yes])
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
+AC_SUBST([HOST_OS_ARCH])
 
 # Checks for programs
 AM_PROG_AR
+AC_CANONICAL_HOST
+HOST_OS_ARCH=""
+AS_CASE([$host_cpu],
+        [x86_64|aarch64*|mips64*|ppc64*|sparc64],
+        [
+            HOST_OS_ARCH="64"
+        ],
+        [i?86|arm*|mips*|ppc*|sparc],
+        [
+            HOST_OS_ARCH="32"
+        ])
+
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
