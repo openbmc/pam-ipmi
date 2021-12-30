@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "653a1a1e_ef80d512",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-30T15:43:49Z",
+      "side": 1,
+      "message": "Please use the existing change under review so that we can see the differences: I6da08504e8a842d70f1ed5db541b8e5ce483c311",
+      "revId": "20091b1a7bb8a50c9db9bba240d8d9a150c4330b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
