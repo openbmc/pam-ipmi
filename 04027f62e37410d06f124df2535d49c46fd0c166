@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "979e281b_fa4aee6d",
         "filename": "/COMMIT_MSG",
@@ -14,10 +15,10 @@
       "side": 1,
       "message": "Please fix the commit message. https://chris.beams.io/posts/git-commit/",
       "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "05fc5e21_7cbda514",
         "filename": "Makefile.am",
@@ -31,10 +32,10 @@
       "side": 1,
       "message": "This will install ipmi_pass_64 on 32 bit machines.  I don\u0027t think that is appropriate.",
       "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "462aed6b_2e7da5c0",
         "filename": "Makefile.am",
@@ -49,10 +50,28 @@
       "message": "sysconf_DATA could not be placed inside an if-endif, so I remove ipmi_pass_64 when $host is not  aarch64",
       "parentUuid": "05fc5e21_7cbda514",
       "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "923e8f1a_4ff37cfe",
+        "filename": "Makefile.am",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-01-03T13:17:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "462aed6b_2e7da5c0",
+      "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "73e8fa01_01231502",
         "filename": "Makefile.am",
@@ -66,8 +85,7 @@
       "side": 1,
       "message": "It seems odd to me that we\u0027re creating a default binary file and checking it into the repository.  We other issues here with dealing with the structure changing and endianness.  Can we do something to make the executable / library create a default file if one does not exist?",
       "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

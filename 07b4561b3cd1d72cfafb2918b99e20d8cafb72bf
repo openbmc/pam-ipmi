@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13e0e4d1_89421a86",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-01-03T13:17:15Z",
+      "side": 1,
+      "message": "Just a minor suggestion.  I still don\u0027t really like that we have raw binaries we are checking in, but this is obviously the most simple path forward at the present.",
+      "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbb264ab_2a872beb",
+        "filename": "configure.ac",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-01-03T13:17:15Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be TARGET?  There are 3 components in autoconf: build, host, target.  Often host\u003d\u003dtarget, but when creating the Yocto SDK there is \"cross-canadian\" where build !\u003d host !\u003d target.",
+      "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
