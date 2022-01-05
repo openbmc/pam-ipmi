@@ -33,6 +33,24 @@
       "message": "Shouldn\u0027t this be TARGET?  There are 3 components in autoconf: build, host, target.  Often host\u003d\u003dtarget, but when creating the Yocto SDK there is \"cross-canadian\" where build !\u003d host !\u003d target.",
       "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0846dea_3b3d9a12",
+        "filename": "configure.ac",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-01-05T15:48:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dbb264ab_2a872beb",
+      "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
