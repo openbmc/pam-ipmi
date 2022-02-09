@@ -51,6 +51,24 @@
       "parentUuid": "dbb264ab_2a872beb",
       "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2554916_b4728eb5",
+        "filename": "configure.ac",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000343
+      },
+      "writtenOn": "2022-02-09T05:10:44Z",
+      "side": 1,
+      "message": "I have changed HOST to TARGET, thanks.",
+      "parentUuid": "dbb264ab_2a872beb",
+      "revId": "07b4561b3cd1d72cfafb2918b99e20d8cafb72bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

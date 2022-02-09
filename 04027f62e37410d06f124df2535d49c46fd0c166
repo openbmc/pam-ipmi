@@ -104,6 +104,24 @@
       "message": "It seems odd to me that we\u0027re creating a default binary file and checking it into the repository.  We other issues here with dealing with the structure changing and endianness.  Can we do something to make the executable / library create a default file if one does not exist?",
       "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88b8d43b_55c98cde",
+        "filename": "Makefile.am",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000343
+      },
+      "writtenOn": "2022-02-09T05:10:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73e8fa01_01231502",
+      "revId": "04027f62e37410d06f124df2535d49c46fd0c166",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
