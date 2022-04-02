@@ -679,7 +679,7 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 				"Password length (%x) / User name length (%x) not acceptable",
 				strlen(pass_new), strlen(user));
 			pass_new = NULL;
-			return PAM_NEW_AUTHTOK_REQD;
+			return PAM_AUTHTOK_ERR;
 		}
 		if (spec_pass_file == NULL) {
 			spec_pass_file = DEFAULT_SPEC_PASS_FILE;
