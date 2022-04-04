@@ -672,13 +672,15 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 
 	if (spec_grp_usr) {
 		// verify the new password is acceptable.
-		if (strlen(pass_new) > MAX_SPEC_GRP_PASS_LENGTH
-		    || strlen(user) > MAX_SPEC_GRP_USER_LENGTH) {
+		size_t pass_len = strlen(pass_new);
+		size_t user_len = strlen(user);
+		if (pass_len > MAX_SPEC_GRP_PASS_LENGTH
+		    || user_len > MAX_SPEC_GRP_USER_LENGTH) {
 			pam_syslog(
 				pamh, LOG_ERR,
-				"Password length (%x) / User name length (%x) not acceptable",
-				strlen(pass_new), strlen(user));
-			pass_new = NULL;
+				"Password length (%zu) / User name length (%zu) is not acceptable for IPMI",
+				pass_len, user_len);
+			pass_new = pass_old = NULL;
 			return PAM_AUTHTOK_ERR;
 		}
 		if (spec_pass_file == NULL) {
