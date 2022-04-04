@@ -115,6 +115,10 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 				pamh, LOG_ERR,
 				"Password length (%zu) / User name length (%zu) is not acceptable for IPMI",
 				pass_len, user_len);
+			pam_error(
+				pamh,
+				"Username %zu / Password %zu exceeds IPMI 16/20 limit",
+				user_len, pass_len);
 			pass_new = pass_old = NULL;
 			return PAM_AUTHTOK_ERR;
 		}
