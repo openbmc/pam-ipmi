@@ -52,11 +52,11 @@
 typedef struct metapassstruct {
 	char signature[10];
 	unsigned char reseved[2];
-	size_t hashsize;
-	size_t ivsize;
-	size_t datasize;
-	size_t padsize;
-	size_t macsize;
+	uint32_t hashsize;
+	uint32_t ivsize;
+	uint32_t datasize;
+	uint32_t padsize;
+	uint32_t macsize;
 } metapassstruct;
 
 /**
