@@ -2,10 +2,9 @@ ACLOCAL_AMFLAGS = -I m4
 
 CLEANFILES = *~
 
-sysconf_DATA = key_file ipmi_pass
+sysconf_DATA = key_file
 install-exec-hook:
 	chmod 0600 $(DESTDIR)$(sysconfdir)/key_file
-	chmod 0600 $(DESTDIR)$(sysconfdir)/ipmi_pass
 
 securelibdir = /lib/security
 securelib_LTLIBRARIES = pam_ipmicheck.la pam_ipmisave.la
