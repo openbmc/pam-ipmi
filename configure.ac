@@ -9,12 +9,26 @@ AM_SILENT_RULES([yes])
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
+AC_SUBST([TARGET_OS_ARCH])
 
 # Checks for programs
 AM_PROG_AR
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+
+# Checks for arch
+AC_CANONICAL_TARGET
+TARGET_OS_ARCH=""
+AS_CASE([$target_cpu],
+        [x86_64|aarch64*|mips64*|ppc64*|sparc64],
+        [
+            TARGET_OS_ARCH="64"
+        ],
+        [i?86|arm*|mips*|ppc*|sparc],
+        [
+            TARGET_OS_ARCH="32"
+        ])
 
 AX_CHECK_OPENSSL([], [AC_MSG_ERROR(["openssl required and not found"])])
 AC_CHECK_LIB([pam], [pam_start], [], [AC_MSG_ERROR([libpam not found])])
