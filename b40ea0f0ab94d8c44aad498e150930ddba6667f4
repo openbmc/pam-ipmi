@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "53859261_8e87c589",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-11-10T02:24:24Z",
+      "side": 1,
+      "message": "That\u0027s why change to use uint32_t instead size_t. Below is commit for refer it. https://gerrit.openbmc.org/c/openbmc/phosphor-host-ipmid/+/56296\n\nThe issue error message \"Authenticated message doesn\u0027t match\" from encryptDecryptData() in ipmid will not print it by default that use log\u003clevel::DEBUG\u003e. When I change log level to log\u003clevel::ERR\u003e then I found those error message and there is the same struct metapassstruct definition between ipmid and pam-ipmi, but member type didn\u0027t sync well. After sync pam-ipmi to ipmid, error message was gone.\n\nipmid:\nstruct MetaPassStruct\n{\n    char signature[10];\n    unsigned char reseved[2];\n    uint32_t hashSize;\n    uint32_t ivSize;\n    uint32_t dataSize;\n    uint32_t padSize;\n    uint32_t macSize;\n};\n\npam-ipmi:\ntypedef struct metapassstruct {\n    char signature[10];\n    unsigned char reseved[2];\n    size_t hashsize;\n    size_t ivsize;\n    size_t datasize;\n    size_t padsize;\n    size_t macsize;\n} metapassstruct;",
+      "parentUuid": "df36bfa7_65435ed3",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 120
+      },
+      "revId": "b40ea0f0ab94d8c44aad498e150930ddba6667f4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d4bbff98_cbdcc61d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
