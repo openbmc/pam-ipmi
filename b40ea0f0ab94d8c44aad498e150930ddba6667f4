@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "39a3e4f9_cf70881a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-10T18:00:45Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we revert the host-ipmid one?  I don\u0027t really understand why we made the ipmid one uint32_t but that doesn\u0027t seem right.",
+      "parentUuid": "53859261_8e87c589",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 120
+      },
+      "revId": "b40ea0f0ab94d8c44aad498e150930ddba6667f4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d4bbff98_cbdcc61d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
