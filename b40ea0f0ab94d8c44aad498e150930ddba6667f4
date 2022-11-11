@@ -74,6 +74,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "7be70415_618e22d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-11-11T01:48:35Z",
+      "side": 1,
+      "message": "We cannot revert the host-ipmid one, due to there is SEGV then cause ipmid crash.\nI just revert it to size_t and make sure the SEGV symptom still exist with latest ipmid and pam-ipmi as below:\n\nRevert to size_t in ipmid/user_channel/passwd_mgr.cpp\nstruct MetaPassStruct\n{\n    char signature[10];\n    unsigned char reseved[2];\n    size_t hashSize;\n    size_t ivSize;\n    size_t dataSize;\n    size_t padSize;\n    size_t macSize;\n};\n\nAfter flashing image and boot to openbmc prompt then find ipmid service was crash.\n\nroot@evb-npcm845:~# systemctl status phosphor-ipmi-host.service\nx phosphor-ipmi-host.service - Phosphor Inband IPMI\n     Loaded: loaded (/lib/systemd/system/phosphor-ipmi-host.service; enabled; preset: enabled)\n    Drop-In: /lib/systemd/system/phosphor-ipmi-host.service.d\n             `-10-override.conf\n     Active: failed (Result: core-dump) since Thu 1970-01-01 00:00:22 UTC; 2min 57s ago\n   Duration: 989ms\n    Process: 606 ExecStart\u003d/usr/bin/env ipmid (code\u003ddumped, signal\u003dSEGV)\n   Main PID: 606 (code\u003ddumped, signal\u003dSEGV)\n\nJan 01 00:00:22 evb-npcm845 systemd[1]: Failed to start Phosphor Inband IPMI.",
+      "parentUuid": "39a3e4f9_cf70881a",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 120
+      },
+      "revId": "b40ea0f0ab94d8c44aad498e150930ddba6667f4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d4bbff98_cbdcc61d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
