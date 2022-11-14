@@ -98,6 +98,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "42698898_9712bf2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-11-14T04:04:17Z",
+      "side": 1,
+      "message": "Hi Patrick,\n\nI think you are right, I also don\u0027t understand why host-ipmid need change to use uint32_t instead size_t for fixing ipmid crash issue. Thus, I did some debugging and testing to clarify why didn\u0027t we keep host-ipmid and pam-ipmi both size_t. Yes, they both should keep use size_t and we should revert host-ipmid to use size_t.\n\nI found that real root cause seems relate to this original file /etc/ipmi_pass from pam-ipmi repo. Below is investigation for you refer it.\n\nFirst, I revert host-ipmid to use size_t then I will meet host-ipmid crash issue for sure.\n\nSecond, I keep pam-ipmi use size_t and without install original ipmi_pass file as I submit another commit as below:\nhttps://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/58579\n\nThird, I try to generate new ipmi_pass file by command \"ipmitool user set password 1 0penBmc\" after I flash image-bmc. BTW, this image-bmc that use \"minlen\u003d7\" in common-password that can let us generate \"0penBmc\" this password as default in ipmi_pass file.\n\nAfter that, I replace this ipmi_pass file by bbappend and generate image-bmc again. Then flash this new image-bmc. There is no more ipmid crash issue symptom after device boot up and no more auth failed error messages. However, ipmitool user set password for root also successful as below:\n\nroot@evb-npcm845:~# ipmitool user set password 1 0penBmc0\nSet User Password command successful (user 1)\n\nThus, I will submit one commit to revert host-ipmid this commit https://gerrit.openbmc.org/c/openbmc/phosphor-host-ipmid/+/56296\n\nThen close this commit and update new ipmi_pass file into this commit https://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/58579\n\nIf there is any suggestion, please don\u0027t hestiate to tell me. Thank you.\n\nBest regards,\nTim",
+      "parentUuid": "7be70415_618e22d8",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 120
+      },
+      "revId": "b40ea0f0ab94d8c44aad498e150930ddba6667f4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d4bbff98_cbdcc61d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
