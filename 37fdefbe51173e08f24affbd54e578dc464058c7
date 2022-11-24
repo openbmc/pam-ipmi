@@ -33,6 +33,23 @@
       "message": "Hi Patrick,\n\nThanks your help to review this commit, I will abandon this commit.\nDue to according our investigation in below commit.\nhttps://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/58550\n\nIf there is any suggestion, please kindly let me know to improve it. Thank you.\nBest regards,\nTim",
       "revId": "37fdefbe51173e08f24affbd54e578dc464058c7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc292c65_807d5f02",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-11-24T01:39:36Z",
+      "side": 1,
+      "message": "Hi Richard,\n\nCould you please help to review and merge this commit? I also discuss this issue on Discord with Patrick, here is the test result for you refer it. Please help us. Thank you.\n\nroot@evb-npcm845:~# ls -l /etc/ipmi_pass\nls: /etc/ipmi_pass: No such file or directory\nroot@evb-npcm845:~# ipmitool user set password 1 0penBmc\nSet User Password command successful (user 1)\nroot@evb-npcm845:~# ls -l /etc/ipmi_pass\n-rw-------    1 root     root           184 Jan  1 00:01 /etc/ipmi_pass\nroot@evb-npcm845:~# exit\nlogout\n\nevb-npcm845 login: root\nPassword:\n\nAfter reboot device, then we can login with password 0penBmc. However, I do another test to change password to 0penBmc0 then test result is good also. Thanks.",
+      "revId": "37fdefbe51173e08f24affbd54e578dc464058c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
