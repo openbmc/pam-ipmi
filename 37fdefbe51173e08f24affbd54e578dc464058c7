@@ -67,6 +67,23 @@
       "message": "Hi Vernon,\nI add you as reviewer for this commit, please help us to review it.\n\nSincerely,\nTim",
       "revId": "37fdefbe51173e08f24affbd54e578dc464058c7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "44e75576_271a6000",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-11-28T03:59:18Z",
+      "side": 1,
+      "message": "Hi Anton,\nPlease help us to review this commit and as we mentioned in the mail.\n\nWe need to revert below commit in host-ipmid as below:\ncommit 05703adfe2bf70945d2befa8a7beda4ce5e5182a\nAuthor: Anton Blanchard \u003canton@ozlabs.org\u003e\nDate:   Fri Aug 5 16:14:09 2022 +1000\n    user_mgmt: Fix SEGV on 64bit\n\nDue to we found that root cause about SEGV on 64bit and after modify in pam-ipmit then SEGV on 64bit will not happen anymore.\nThus, we submitted this commit in gerrit in pam-ipmi as below:\nhttps://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/58579\n\nSincerely,\nTim",
+      "revId": "37fdefbe51173e08f24affbd54e578dc464058c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
