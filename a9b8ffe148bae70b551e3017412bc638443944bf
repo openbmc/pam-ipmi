@@ -33,6 +33,24 @@
       "message": "I believe this will be abandoned, right?",
       "revId": "a9b8ffe148bae70b551e3017412bc638443944bf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2668ab10_73bc90e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-12-02T23:27:13Z",
+      "side": 1,
+      "message": "Yes, you\u0027re right. Due to below two commits already got approved to merge by authors. Thus, we will abandon this commit. Thanks your help.\n\n59035: Revert \"user_mgmt: Fix SEGV on 64bit\" | https://gerrit.openbmc.org/c/openbmc/phosphor-host-ipmid/+/59035\n\n58579: pam-ipmi: fix ipmitool user set password failed in 64bit environment | https://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/58579",
+      "parentUuid": "191bb3c9_b67691a0",
+      "revId": "a9b8ffe148bae70b551e3017412bc638443944bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
