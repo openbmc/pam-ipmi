@@ -33,6 +33,23 @@
       "message": "Hi Vernon,\nCould you kindly help to merge this commit if there is no any concern? Thank you.\n\nBest regards,\nTim",
       "revId": "bf69a632741e394957431c120039772e9bafa199",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "072d0708_4ca954a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-12-13T07:13:11Z",
+      "side": 1,
+      "message": "Dear All,\n\nWe will submit a new patchset. Due to we found that if this default file /etc/ipmi_pass is not exist that will cause \"Error: Unable to establish IPMI v2 / RMCP+ session\" when we issue lanplus cmd: \"ipmitool -I lanplus -C 17 -p 623 -U root -P 0penBmc -H 192.168.0.12 mc info\".\n\nThis error message is cause from netipmid that will call host-ipmid\u0027s ipmi::ipmiUserGetPassword in rakp12.cpp then use stat(passwdFileName, \u0026fileStat) to check this file whether is exist (passwdFileName \u003d \"/etc/ipmi_pass\"). If not exist then return rmcp error RAKP_ReturnCode::UNAUTH_NAME, after that we saw unable to establish RMCP+ session error message.\n\nFor avoid this error, we can issue this cmd \"ipmitool user set password 1 0penBmc\" before issue lanplus cmd, but seems this is not our expectation when issuing lanplus cmd. Thus, we have a proposal to fix this symptom before. According to host OS to select correct ipmi_pass for 32/64 bit. BTW, we have tested on 32/64 bit project. Could you please help provide your suggestion if this proposal is acceptable then we will submit a new patchset for that. Thank you.\n",
+      "revId": "bf69a632741e394957431c120039772e9bafa199",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
