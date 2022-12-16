@@ -86,6 +86,24 @@
       "parentUuid": "fafc0507_167f64e4",
       "revId": "bf69a632741e394957431c120039772e9bafa199",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba7cc8fa_994c1369",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2022-12-16T15:33:47Z",
+      "side": 1,
+      "message": "Is it a possibility to have 2 versions of pam-ipmi, one for 32bit and 64 bit and install accordingly?",
+      "parentUuid": "e5d78392_cf63a98a",
+      "revId": "bf69a632741e394957431c120039772e9bafa199",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
