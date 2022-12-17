@@ -104,6 +104,24 @@
       "parentUuid": "e5d78392_cf63a98a",
       "revId": "bf69a632741e394957431c120039772e9bafa199",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd696e9e_05868bef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-12-17T13:42:13Z",
+      "side": 1,
+      "message": "Personally, it\u0027s seems more complicate to us and the root cause is about ipmi_pass this file.\nThus, we just think to install the default ipmi_pass according 32bit and 64bit arch.\nAccording our proposal that only add one ipmi_pass_64 file in pam-ipmi.\nBut only one default file ipmi_pass will be installed as original design of pam-ipmi.\n\nWe want to modify the Makefile.am as below for you refer it:\n1. Add new ipmi_pass_64 from 64bit environment\n2. Rename original ipmi_pass to ipmi_pass_32\n3. Install ipmi_pass accordingly\n4. Remove ipmi_pass_64 and ipmi_pass_32 after installation\n\nsysconf_DATA \u003d key_file ipmi_pass_32 ipmi_pass_64\n\nFILE_32 :\u003d ipmi_pass_32\nFILE_64 :\u003d ipmi_pass_64\n\nCP_FILE :\u003d $(FILE_$(TARGET_OS_ARCH))\n\ninstall-exec-hook:\ncp $(DESTDIR)$(sysconfdir)/$(CP_FILE) $(DESTDIR)$(sysconfdir)/ipmi_pass\nrm $(DESTDIR)$(sysconfdir)/ipmi_pass_64\nrm $(DESTDIR)$(sysconfdir)/ipmi_pass_32\n\nIf this proposal is good for pam-ipmi, please give us your suggestion.\nThanks again for you all review for this. Looking forward your feedback.\n\nSincerely,\nTim",
+      "parentUuid": "ba7cc8fa_994c1369",
+      "revId": "bf69a632741e394957431c120039772e9bafa199",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
