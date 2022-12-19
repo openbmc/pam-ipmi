@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db450623_f2f390b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-12-19T07:25:50Z",
+      "side": 1,
+      "message": "Hi Patrick,\nI meet this CI failed about README.md without newline at end of file.\nThus, I modify README.md in this commit for you refer it.\nCould you please help us to review this commit again? Thank you.\n\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-# pam-ipmi\n\\ No newline at end of file\n+# pam-ipmi\nFormat: FAILED",
+      "revId": "9f1baae3f9d99e592964bda500c97c83668d148d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
