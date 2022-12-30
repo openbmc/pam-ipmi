@@ -16,6 +16,23 @@
       "message": "Hi Richard,\n\nCould you help to merge this commit? We really need your help to merge it.\nOur 64bit platform got this issue symptom and need this commit to solve it.\nThank you so much.\n\nSincerely,\nTim",
       "revId": "8c974f00bc2b0310049c3d7757884ab5eeeed0d6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6186c4dc_652c3481",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000294
+      },
+      "writtenOn": "2022-12-30T02:59:11Z",
+      "side": 1,
+      "message": "Hello Richard,\nCould you kindly help us to merge this commit? Just ping friendly.\nIf there is any concern, please don\u0027t hesitate to tell us. Thank you. \n\nSincerely,\nTim",
+      "revId": "8c974f00bc2b0310049c3d7757884ab5eeeed0d6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
