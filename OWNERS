@@ -33,8 +33,10 @@
 
 owners:
 - richard.marian.thomaiyar@linux.intel.com
+- vernon.mauery@linux.intel.com
 
 reviewers:
+- rushtotom@gmail.com
 
 matchers:
 
@@ -42,3 +44,9 @@ openbmc:
 - name: Richard Thomaiyar
   email: richard.marian.thomaiyar@linux.intel.com
   discord: rthomaiy
+- name: Tom Joseph
+  email: rushtotom@gmail.com
+  discord: tomjose
+- name: Vernon Mauery
+  email: vernon.mauery@linux.intel.com
+  discord: vmauery
