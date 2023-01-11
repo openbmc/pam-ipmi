@@ -1,0 +1,7 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Richard Marian Thomaiyar <richard.marian.thomaiyar@linux.intel.com>
+Submitted-by: Tom Joseph <rushtotom@gmail.com>
+Submitted-at: Wed, 11 Jan 2023 13:57:14 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/pam-ipmi/+/60226
+Project: openbmc/pam-ipmi
+Branch: refs/heads/master
