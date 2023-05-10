@@ -14,11 +14,11 @@
 // limitations under the License.
 */
 
-#include <syslog.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
+#include <syslog.h>
 
 #include <security/pam_ext.h>
 #include <security/pam_modules.h>
@@ -26,7 +26,6 @@
 
 #define MAX_SPEC_GRP_PASS_LENGTH 20
 #define MAX_SPEC_GRP_USER_LENGTH 16
-
 
 /*
  * This module is intended to verify special group user password matches the
@@ -37,7 +36,6 @@
  * This module has to be used along with pam_ipmisave module, which will save
  * the passwords of the special group users.
  */
-
 
 static const char *get_option(const pam_handle_t *pamh, const char *option,
 			      int argc, const char **argv)
@@ -64,7 +62,7 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 	const char *user = NULL;
 	const char *pass_new = NULL, *pass_old = NULL;
 	const char *spec_grp_name =
-		get_option(pamh, "spec_grp_name", argc, argv);
+	    get_option(pamh, "spec_grp_name", argc, argv);
 
 	pam_syslog(pamh, LOG_DEBUG, "Special group name is %s", spec_grp_name);
 
@@ -109,16 +107,16 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 		// verify the new password is acceptable.
 		size_t pass_len = strlen(pass_new);
 		size_t user_len = strlen(user);
-		if (pass_len > MAX_SPEC_GRP_PASS_LENGTH
-		    || user_len > MAX_SPEC_GRP_USER_LENGTH) {
-			pam_syslog(
-				pamh, LOG_ERR,
-				"Password length (%zu) / User name length (%zu) is not acceptable for IPMI",
-				pass_len, user_len);
-			pam_error(
-				pamh,
-				"Username %zu / Password %zu exceeds IPMI 16/20 limit",
-				user_len, pass_len);
+		if (pass_len > MAX_SPEC_GRP_PASS_LENGTH ||
+		    user_len > MAX_SPEC_GRP_USER_LENGTH) {
+			pam_syslog(pamh, LOG_ERR,
+				   "Password length (%zu) / User name length "
+				   "(%zu) is not acceptable for IPMI",
+				   pass_len, user_len);
+			pam_error(pamh,
+				  "Username %zu / Password %zu exceeds IPMI "
+				  "16/20 limit",
+				  user_len, pass_len);
 			pass_new = pass_old = NULL;
 			return PAM_AUTHTOK_ERR;
 		}
