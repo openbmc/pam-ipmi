@@ -14,17 +14,17 @@
 // limitations under the License.
 */
 
-#include <syslog.h>
+#include <fcntl.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <syslog.h>
+#include <unistd.h>
 
-#include <security/pam_modules.h>
 #include <security/pam_ext.h>
+#include <security/pam_modules.h>
 #include <security/pam_modutil.h>
 
 #include <openssl/evp.h>
@@ -150,10 +150,10 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 	int retval = 0;
 	size_t outlen = 0;
 
-	if (cipher == NULL || key == NULL || iv == NULL || inbytes == NULL
-	    || outbytes == NULL || mac == NULL || inbyteslen == 0
-	    || EVP_CIPHER_key_length(cipher) > keylen
-	    || EVP_CIPHER_iv_length(cipher) > ivlen) {
+	if (cipher == NULL || key == NULL || iv == NULL || inbytes == NULL ||
+	    outbytes == NULL || mac == NULL || inbyteslen == 0 ||
+	    EVP_CIPHER_key_length(cipher) > keylen ||
+	    EVP_CIPHER_iv_length(cipher) > ivlen) {
 		pam_syslog(pamh, LOG_DEBUG, "Invalid inputs");
 		return -1;
 	}
@@ -163,16 +163,15 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 		char calmac[EVP_MAX_MD_SIZE];
 		size_t calmaclen = 0;
 		// calculate MAC for the encrypted message.
-		if (NULL
-		    == HMAC(digest, key, keylen, inbytes, inbyteslen, calmac,
-			    &calmaclen)) {
+		if (NULL == HMAC(digest, key, keylen, inbytes, inbyteslen,
+				 calmac, &calmaclen)) {
 			pam_syslog(pamh, LOG_DEBUG,
 				   "Failed to verify authentication %d",
 				   retval);
 			return -1;
 		}
-		if (!((calmaclen == *maclen)
-		      && (memcmp(calmac, mac, calmaclen) == 0))) {
+		if (!((calmaclen == *maclen) &&
+		      (memcmp(calmac, mac, calmaclen) == 0))) {
 			pam_syslog(pamh, LOG_DEBUG,
 				   "Authenticated message doesn't match %d, %d",
 				   calmaclen, *maclen);
@@ -194,8 +193,8 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 	if ((retval = EVP_CipherUpdate(ctx, outbytes + outlen, &outEVPlen,
 				       inbytes, inbyteslen))) {
 		outlen += outEVPlen;
-		if ((retval = EVP_CipherFinal(ctx, outbytes + outlen,
-					      &outEVPlen))) {
+		if ((retval =
+			 EVP_CipherFinal(ctx, outbytes + outlen, &outEVPlen))) {
 			outlen += outEVPlen;
 			*outbyteslen = outlen;
 		} else {
@@ -214,9 +213,8 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 
 	if (isencrypt) {
 		// Create MAC for the encrypted message.
-		if (NULL
-		    == HMAC(digest, key, keylen, outbytes, *outbyteslen, mac,
-			    maclen)) {
+		if (NULL == HMAC(digest, key, keylen, outbytes, *outbyteslen,
+				 mac, maclen)) {
 			pam_syslog(pamh, LOG_DEBUG,
 				   "Failed to create authentication %d",
 				   retval);
@@ -225,7 +223,6 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 	}
 	return 0;
 }
-
 
 /**
  * @brief get temporary file handle
@@ -252,7 +249,6 @@ FILE *get_temp_file_handle(const pam_handle_t *pamh, char *const tempfilename)
 	umask(oldmask);
 	return tempfile;
 }
-
 
 /**
  * @brief updates special password file
@@ -307,8 +303,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	// verify the tempfilename buffer is enough to hold
 	// filename_XXXXXX (+1 for null).
-	if (strlen(filename)
-	    > (sizeof(tempfilename) - strlen("__XXXXXX") - 1)) {
+	if (strlen(filename) >
+	    (sizeof(tempfilename) - strlen("__XXXXXX") - 1)) {
 		pam_syslog(pamh, LOG_DEBUG, "Not enough buffer, bailing out");
 		return PAM_AUTHTOK_ERR;
 	}
@@ -350,8 +346,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 	// Override the file permission with S_IWUSR | S_IRUSR
 	st.st_mode = S_IWUSR | S_IRUSR;
-	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1)
-	    || (fchmod(fileno(pwfile), st.st_mode) == -1)) {
+	if ((fchown(fileno(pwfile), st.st_uid, st.st_gid) == -1) ||
+	    (fchmod(fileno(pwfile), st.st_mode) == -1)) {
 		if (opwfile != NULL) {
 			fclose(opwfile);
 		}
@@ -384,8 +380,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			// User & password pairs are mapped as <user
 			// name>:<password>\n. Add +3 for special chars ':',
 			// '\n' and '\0'.
-			pwptextlen = opwmp->datasize + forwholen + towhatlen + 3
-				     + EVP_CIPHER_block_size(cipher);
+			pwptextlen = opwmp->datasize + forwholen + towhatlen +
+				     3 + EVP_CIPHER_block_size(cipher);
 			pwptext = malloc(pwptextlen);
 			if (pwptext == NULL) {
 				free(opwptext);
@@ -405,22 +401,18 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			if (opwmp->datasize != 0) {
 				// Do the decryption
 				if (encrypt_decrypt_data(
-					    pamh, 0, cipher, key, keylen,
-					    opwfilebuff + sizeof(*opwmp)
-						    + opwmp->hashsize,
-					    opwmp->ivsize,
-					    opwfilebuff + sizeof(*opwmp)
-						    + opwmp->hashsize
-						    + opwmp->ivsize,
+					pamh, 0, cipher, key, keylen,
+					opwfilebuff + sizeof(*opwmp) +
+					    opwmp->hashsize,
+					opwmp->ivsize,
+					opwfilebuff + sizeof(*opwmp) +
+					    opwmp->hashsize + opwmp->ivsize,
+					opwmp->datasize + opwmp->padsize,
+					opwptext, &opwptextlen,
+					opwfilebuff + sizeof(*opwmp) +
+					    opwmp->hashsize + opwmp->ivsize +
 					    opwmp->datasize + opwmp->padsize,
-					    opwptext, &opwptextlen,
-					    opwfilebuff + sizeof(*opwmp)
-						    + opwmp->hashsize
-						    + opwmp->ivsize
-						    + opwmp->datasize
-						    + opwmp->padsize,
-					    &opwmp->macsize)
-				    != 0) {
+					&opwmp->macsize) != 0) {
 					pam_syslog(pamh, LOG_DEBUG,
 						   "Decryption failed");
 					free(pwptext);
@@ -441,18 +433,18 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			// to the new buffer, and update the password if user
 			// already exists.
 			while (linebuff != NULL) {
-				if ((!strncmp(linebuff, forwho, forwholen))
-				    && (linebuff[forwholen] == ':')) {
-					writtensize += snprintf(
-						pwptext + writtensize,
-						pwptextlen - writtensize,
-						"%s:%s\n", forwho, towhat);
+				if ((!strncmp(linebuff, forwho, forwholen)) &&
+				    (linebuff[forwholen] == ':')) {
+					writtensize +=
+					    snprintf(pwptext + writtensize,
+						     pwptextlen - writtensize,
+						     "%s:%s\n", forwho, towhat);
 					wroteentry = 1;
 				} else {
-					writtensize += snprintf(
-						pwptext + writtensize,
-						pwptextlen - writtensize,
-						"%s\n", linebuff);
+					writtensize +=
+					    snprintf(pwptext + writtensize,
+						     pwptextlen - writtensize,
+						     "%s\n", linebuff);
 				}
 				linebuff = strtok(NULL, "\n");
 			}
@@ -462,8 +454,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		free(opwfilebuff);
 		free(opwptext);
 	} else {
-		pwptextlen = forwholen + towhatlen + 3
-			     + EVP_CIPHER_block_size(cipher);
+		pwptextlen =
+		    forwholen + towhatlen + 3 + EVP_CIPHER_block_size(cipher);
 		pwptext = malloc(pwptextlen);
 		if (pwptext == NULL) {
 			if (opwfile != NULL) {
@@ -481,9 +473,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	if (!wroteentry) {
 		// Write the new user:password pair at the end.
-		writtensize += snprintf(pwptext + writtensize,
-					pwptextlen - writtensize, "%s:%s\n",
-					forwho, towhat);
+		writtensize +=
+		    snprintf(pwptext + writtensize, pwptextlen - writtensize,
+			     "%s:%s\n", forwho, towhat);
 	}
 	pwptextlen = writtensize;
 
@@ -521,10 +513,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 
 	// Do the encryption
-	if (encrypt_decrypt_data(pamh, 1, cipher, key, keylen, iv,
-				 EVP_CIPHER_iv_length(cipher), pwptext,
-				 pwptextlen, pwctext, &pwctextlen, mac, &maclen)
-	    != 0) {
+	if (encrypt_decrypt_data(
+		pamh, 1, cipher, key, keylen, iv, EVP_CIPHER_iv_length(cipher),
+		pwptext, pwptextlen, pwctext, &pwctextlen, mac, &maclen) != 0) {
 		pam_syslog(pamh, LOG_DEBUG, "Encryption failed");
 		free(pwctext);
 		free(pwptext);
@@ -568,9 +559,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	if (fflush(pwfile) || fsync(fileno(pwfile))) {
 		pam_syslog(
-			pamh, LOG_DEBUG,
-			"fflush or fsync error writing entries to special file: %s",
-			tempfilename);
+		    pamh, LOG_DEBUG,
+		    "fflush or fsync error writing entries to special file: %s",
+		    tempfilename);
 		err = 1;
 	}
 
@@ -604,7 +595,6 @@ done:
 	}
 }
 
-
 /* Password Management API's */
 
 /**
@@ -624,11 +614,10 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 	const char *user = NULL;
 	const char *pass_new = NULL, *pass_old = NULL;
 	const char *spec_grp_name =
-		get_option(pamh, "spec_grp_name", argc, argv);
+	    get_option(pamh, "spec_grp_name", argc, argv);
 	const char *spec_pass_file =
-		get_option(pamh, "spec_pass_file", argc, argv);
+	    get_option(pamh, "spec_pass_file", argc, argv);
 	const char *key_file = get_option(pamh, "key_file", argc, argv);
-
 
 	if (spec_grp_name == NULL || key_file == NULL) {
 		return PAM_IGNORE;
@@ -674,21 +663,21 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 		// verify the new password is acceptable.
 		size_t pass_len = strlen(pass_new);
 		size_t user_len = strlen(user);
-		if (pass_len > MAX_SPEC_GRP_PASS_LENGTH
-		    || user_len > MAX_SPEC_GRP_USER_LENGTH) {
-			pam_syslog(
-				pamh, LOG_ERR,
-				"Password length (%zu) / User name length (%zu) is not acceptable for IPMI",
-				pass_len, user_len);
+		if (pass_len > MAX_SPEC_GRP_PASS_LENGTH ||
+		    user_len > MAX_SPEC_GRP_USER_LENGTH) {
+			pam_syslog(pamh, LOG_ERR,
+				   "Password length (%zu) / User name length "
+				   "(%zu) is not acceptable for IPMI",
+				   pass_len, user_len);
 			pass_new = pass_old = NULL;
 			return PAM_AUTHTOK_ERR;
 		}
 		if (spec_pass_file == NULL) {
 			spec_pass_file = DEFAULT_SPEC_PASS_FILE;
 			pam_syslog(
-				pamh, LOG_ERR,
-				"Using default special password file name :%s",
-				spec_pass_file);
+			    pamh, LOG_ERR,
+			    "Using default special password file name :%s",
+			    spec_pass_file);
 		}
 		if (retval = lock_pwdf()) {
 			pam_syslog(pamh, LOG_ERR,
@@ -696,7 +685,7 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 			return retval;
 		}
 		retval = update_pass_special_file(
-			pamh, key_file, spec_pass_file, user, pass_new);
+		    pamh, key_file, spec_pass_file, user, pass_new);
 		unlock_pwdf();
 		return retval;
 	}
