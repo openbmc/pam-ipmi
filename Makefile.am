@@ -16,7 +16,7 @@ install-exec-hook:
 	chmod 0600 $(DESTDIR)$(sysconfdir)/key_file
 	chmod 0600 $(DESTDIR)$(sysconfdir)/ipmi_pass
 
-securelibdir = /lib/security
+securelibdir = ${libdir}/security
 securelib_LTLIBRARIES = pam_ipmicheck.la pam_ipmisave.la
 
 pam_ipmicheck_la_SOURCES = src/pam_ipmicheck/pam_ipmicheck.c
