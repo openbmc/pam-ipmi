@@ -1,0 +1,6 @@
+#
+# Features
+#
+# Add features here
+# option('new-feature', type: 'feature', description: 'Option to add support for new feature')
+
