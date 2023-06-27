@@ -16,6 +16,23 @@
       "message": "Need to hold off merging this one until the recipe change goes in.",
       "revId": "8f56531c78f6a63529cb6bb8b48bd4bf2ac4f2f0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "670f7545_85c5cfe3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2023-06-27T19:08:14Z",
+      "side": 1,
+      "message": "Can you add description to the commit as well ?",
+      "revId": "8f56531c78f6a63529cb6bb8b48bd4bf2ac4f2f0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
