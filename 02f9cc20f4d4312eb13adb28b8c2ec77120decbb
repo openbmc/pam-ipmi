@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6cae36e4_5c6444dd",
+        "filename": "meson.build",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2023-06-27T19:15:11Z",
+      "side": 1,
+      "message": "I think this can be removed and could be added if the macro is used in future.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 1
+      },
+      "revId": "02f9cc20f4d4312eb13adb28b8c2ec77120decbb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9da5cb3_0ac22ad0",
+        "filename": "meson.build",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2023-06-27T19:15:11Z",
+      "side": 1,
+      "message": "This could be removed as well.",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 10
+      },
+      "revId": "02f9cc20f4d4312eb13adb28b8c2ec77120decbb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f405ccad_4cccba5c",
+        "filename": "meson_options.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2023-06-27T19:15:11Z",
+      "side": 1,
+      "message": "Can we remove this file as all the lines are commented as of now?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 94
+      },
+      "revId": "02f9cc20f4d4312eb13adb28b8c2ec77120decbb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
