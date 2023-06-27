@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73aa41a6_3b5a755d",
+        "filename": "src/pam_ipmicheck/pam_ipmicheck.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2023-06-27T19:20:27Z",
+      "side": 1,
+      "message": "This parameter is not used in the function. Can\u0027t it be removed?",
+      "range": {
+        "startLine": 40,
+        "startChar": 50,
+        "endLine": 40,
+        "endChar": 54
+      },
+      "revId": "3de4608b90c1b0b60316be75e3e5240647f3f9b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
