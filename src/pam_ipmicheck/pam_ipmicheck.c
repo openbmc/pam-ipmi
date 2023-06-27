@@ -37,8 +37,7 @@
  * the passwords of the special group users.
  */
 
-static const char *get_option(const pam_handle_t *pamh, const char *option,
-			      int argc, const char **argv)
+static const char *get_option(const char *option, int argc, const char **argv)
 {
 	int i = 0;
 	size_t len = strlen(option);
@@ -58,17 +57,14 @@ static const char *get_option(const pam_handle_t *pamh, const char *option,
 int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
 	int retval = -1;
-	const void *item = NULL;
 	const char *user = NULL;
 	const char *pass_new = NULL, *pass_old = NULL;
-	const char *spec_grp_name =
-	    get_option(pamh, "spec_grp_name", argc, argv);
-
-	pam_syslog(pamh, LOG_DEBUG, "Special group name is %s", spec_grp_name);
+	const char *spec_grp_name = get_option("spec_grp_name", argc, argv);
 
 	if (spec_grp_name == NULL) {
 		return PAM_IGNORE;
 	}
+	pam_syslog(pamh, LOG_DEBUG, "Special group name is %s", spec_grp_name);
 	if (flags & PAM_PRELIM_CHECK) {
 		// send success to verify other stacked modules prelim check.
 		pam_syslog(pamh, LOG_DEBUG, "PRELIM_CHECK Called");
