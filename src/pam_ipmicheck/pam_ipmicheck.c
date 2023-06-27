@@ -40,6 +40,9 @@
 static const char *get_option(const pam_handle_t *pamh, const char *option,
 			      int argc, const char **argv)
 {
+	if (!pamh) {
+		return NULL;
+	}
 	int i = 0;
 	size_t len = strlen(option);
 
@@ -58,7 +61,6 @@ static const char *get_option(const pam_handle_t *pamh, const char *option,
 int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
 	int retval = -1;
-	const void *item = NULL;
 	const char *user = NULL;
 	const char *pass_new = NULL, *pass_old = NULL;
 	const char *spec_grp_name =
