@@ -21,7 +21,7 @@ AC_PROG_MAKE_SET
 AC_CANONICAL_TARGET
 TARGET_OS_ARCH=""
 AS_CASE([$target_cpu],
-        [x86_64|aarch64*|mips64*|ppc64*|sparc64],
+        [x86_64|aarch64*|mips64*|ppc64*|sparc64|riscv64],
         [
             TARGET_OS_ARCH="64"
         ],
