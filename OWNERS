@@ -32,7 +32,6 @@
 # data within them will be kept sorted.
 
 owners:
-- richard.marian.thomaiyar@linux.intel.com
 - vernon.mauery@linux.intel.com
 
 reviewers:
@@ -41,9 +40,6 @@ reviewers:
 matchers:
 
 openbmc:
-- name: Richard Thomaiyar
-  email: richard.marian.thomaiyar@linux.intel.com
-  discord: rthomaiy
 - name: Tom Joseph
   email: rushtotom@gmail.com
   discord: tomjose
