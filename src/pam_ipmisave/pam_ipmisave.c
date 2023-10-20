@@ -38,9 +38,9 @@
 
 #define MAX_SPEC_GRP_PASS_LENGTH 20
 #define MAX_SPEC_GRP_USER_LENGTH 16
-#define MAX_KEY_SIZE 8
-#define DEFAULT_SPEC_PASS_FILE "/etc/ipmi_pass"
-#define META_PASSWD_SIG "=OPENBMC="
+#define MAX_KEY_SIZE		 8
+#define DEFAULT_SPEC_PASS_FILE	 "/etc/ipmi_pass"
+#define META_PASSWD_SIG		 "=OPENBMC="
 
 /*
  * Meta data struct for storing the encrypted password file
@@ -198,8 +198,8 @@ int encrypt_decrypt_data(const pam_handle_t *pamh, int isencrypt,
 	if ((retval = EVP_CipherUpdate(ctx, outbytes + outlen, &outEVPlen,
 				       inbytes, inbyteslen))) {
 		outlen += outEVPlen;
-		if ((retval =
-			 EVP_CipherFinal(ctx, outbytes + outlen, &outEVPlen))) {
+		if ((retval = EVP_CipherFinal(ctx, outbytes + outlen,
+					      &outEVPlen))) {
 			outlen += outEVPlen;
 			*outbyteslen = outlen;
 		} else {
@@ -277,7 +277,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	char tempfilename[1024];
 	size_t forwholen = strlen(forwho);
 	size_t towhatlen = strlen(towhat);
-	char keybuff[MAX_KEY_SIZE] = {0};
+	char keybuff[MAX_KEY_SIZE] = { 0 };
 	size_t keybuffsize = sizeof(keybuff);
 
 	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
@@ -295,8 +295,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	unsigned int maclen = 0;
 	size_t writtensize = 0;
 	unsigned int keylen = 0;
-	metapassstruct pwmp = {META_PASSWD_SIG, {0, 0}, .0, 0, 0, 0, 0};
-	unsigned char mac[EVP_MAX_MD_SIZE] = {0};
+	metapassstruct pwmp = { META_PASSWD_SIG, { 0, 0 }, .0, 0, 0, 0, 0 };
+	unsigned char mac[EVP_MAX_MD_SIZE] = { 0 };
 	unsigned char key[EVP_MAX_KEY_LENGTH];
 	unsigned char iv[EVP_CIPHER_iv_length(cipher)];
 	unsigned char hash[EVP_MD_block_size(digest)];
@@ -412,18 +412,21 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			if (opwmp->datasize != 0) {
 				// Do the decryption
 				if (encrypt_decrypt_data(
-					pamh, 0, cipher, key, keylen,
-					opwfilebuff + sizeof(*opwmp) +
-					    opwmp->hashsize,
-					opwmp->ivsize,
-					opwfilebuff + sizeof(*opwmp) +
-					    opwmp->hashsize + opwmp->ivsize,
-					opwmp->datasize + opwmp->padsize,
-					opwptext, &opwptextlen,
-					opwfilebuff + sizeof(*opwmp) +
-					    opwmp->hashsize + opwmp->ivsize +
+					    pamh, 0, cipher, key, keylen,
+					    opwfilebuff + sizeof(*opwmp) +
+						    opwmp->hashsize,
+					    opwmp->ivsize,
+					    opwfilebuff + sizeof(*opwmp) +
+						    opwmp->hashsize +
+						    opwmp->ivsize,
 					    opwmp->datasize + opwmp->padsize,
-					&tmpmacsize) != 0) {
+					    opwptext, &opwptextlen,
+					    opwfilebuff + sizeof(*opwmp) +
+						    opwmp->hashsize +
+						    opwmp->ivsize +
+						    opwmp->datasize +
+						    opwmp->padsize,
+					    &tmpmacsize) != 0) {
 					pam_syslog(pamh, LOG_DEBUG,
 						   "Decryption failed");
 					free(pwptext);
@@ -448,15 +451,15 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 				if ((!strncmp(linebuff, forwho, forwholen)) &&
 				    (linebuff[forwholen] == ':')) {
 					writtensize += snprintf(
-					    (char *)pwptext + writtensize,
-					    pwptextlen - writtensize, "%s:%s\n",
-					    forwho, towhat);
+						(char *)pwptext + writtensize,
+						pwptextlen - writtensize,
+						"%s:%s\n", forwho, towhat);
 					wroteentry = 1;
 				} else {
 					writtensize += snprintf(
-					    (char *)pwptext + writtensize,
-					    pwptextlen - writtensize, "%s\n",
-					    linebuff);
+						(char *)pwptext + writtensize,
+						pwptextlen - writtensize,
+						"%s\n", linebuff);
 				}
 				linebuff = strtok(NULL, "\n");
 			}
@@ -466,8 +469,8 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 		free(opwfilebuff);
 		free(opwptext);
 	} else {
-		pwptextlen =
-		    forwholen + towhatlen + 3 + EVP_CIPHER_block_size(cipher);
+		pwptextlen = forwholen + towhatlen + 3 +
+			     EVP_CIPHER_block_size(cipher);
 		pwptext = malloc(pwptextlen);
 		if (pwptext == NULL) {
 			if (opwfile != NULL) {
@@ -525,9 +528,10 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 
 	// Do the encryption
-	if (encrypt_decrypt_data(
-		pamh, 1, cipher, key, keylen, iv, EVP_CIPHER_iv_length(cipher),
-		pwptext, pwptextlen, pwctext, &pwctextlen, mac, &maclen) != 0) {
+	if (encrypt_decrypt_data(pamh, 1, cipher, key, keylen, iv,
+				 EVP_CIPHER_iv_length(cipher), pwptext,
+				 pwptextlen, pwctext, &pwctextlen, mac,
+				 &maclen) != 0) {
 		pam_syslog(pamh, LOG_DEBUG, "Encryption failed");
 		free(pwctext);
 		free(pwptext);
@@ -571,9 +575,9 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	if (fflush(pwfile) || fsync(fileno(pwfile))) {
 		pam_syslog(
-		    pamh, LOG_DEBUG,
-		    "fflush or fsync error writing entries to special file: %s",
-		    tempfilename);
+			pamh, LOG_DEBUG,
+			"fflush or fsync error writing entries to special file: %s",
+			tempfilename);
 		err = 1;
 	}
 
@@ -626,9 +630,9 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 	const char *user = NULL;
 	const char *pass_new = NULL, *pass_old = NULL;
 	const char *spec_grp_name =
-	    get_option(pamh, "spec_grp_name", argc, argv);
+		get_option(pamh, "spec_grp_name", argc, argv);
 	const char *spec_pass_file =
-	    get_option(pamh, "spec_pass_file", argc, argv);
+		get_option(pamh, "spec_pass_file", argc, argv);
 	const char *key_file = get_option(pamh, "key_file", argc, argv);
 
 	if (spec_grp_name == NULL || key_file == NULL) {
@@ -687,9 +691,9 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 		if (spec_pass_file == NULL) {
 			spec_pass_file = DEFAULT_SPEC_PASS_FILE;
 			pam_syslog(
-			    pamh, LOG_ERR,
-			    "Using default special password file name :%s",
-			    spec_pass_file);
+				pamh, LOG_ERR,
+				"Using default special password file name :%s",
+				spec_pass_file);
 		}
 		if ((retval = lock_pwdf())) {
 			pam_syslog(pamh, LOG_ERR,
@@ -697,7 +701,7 @@ int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc, const char **argv)
 			return retval;
 		}
 		retval = update_pass_special_file(
-		    pamh, key_file, spec_pass_file, user, pass_new);
+			pamh, key_file, spec_pass_file, user, pass_new);
 		unlock_pwdf();
 		return retval;
 	}
