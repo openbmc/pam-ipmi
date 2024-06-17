@@ -51,7 +51,7 @@
  */
 typedef struct metapassstruct {
 	char signature[10];
-	unsigned char reseved[2];
+	unsigned char reserved[2];
 	size_t hashsize;
 	size_t ivsize;
 	size_t datasize;
@@ -303,7 +303,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 
 	// Following steps are performed in this function.
 	// Step 1: Create a temporary file - always update temporary file, and
-	// then swap it with original one, only if everything succeded at the
+	// then swap it with original one, only if everything succeeded at the
 	// end. Step 2: If file already exists, read the old file and decrypt it
 	// in buffer Step 3: Copy user/password pair from old buffer to new
 	// buffer, and update, if the user already exists with the new password
@@ -497,7 +497,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	// Step 4: Encrypt the data and write to the temporary file
 	if (RAND_bytes(hash, EVP_MD_block_size(digest)) != 1) {
 		pam_syslog(pamh, LOG_DEBUG,
-			   "Hash genertion failed, bailing out");
+			   "Hash generation failed, bailing out");
 		free(pwptext);
 		fclose(pwfile);
 		err = 1;
