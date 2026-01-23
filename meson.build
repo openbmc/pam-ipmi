@@ -15,12 +15,24 @@ compiler = meson.get_compiler('c')
 
 fam = target_machine.cpu_family()
 pw_file = ''
-if (fam == 'aarch64' or fam == 'mips64' or fam == 'ppc64' or
-    fam == 'riscv64' or fam == 'sparc64' or fam == 'x86_64')
+if (
+    fam == 'aarch64'
+    or fam == 'mips64'
+    or fam == 'ppc64'
+    or fam == 'riscv64'
+    or fam == 'sparc64'
+    or fam == 'x86_64'
+)
     pw_file = 'ipmi_pass_64'
-elif (fam == 'arc' or fam == 'arm' or fam == 'mips' or
-    fam == 'ppc' or fam == 'riscv32' or fam == 'sparc' or
-    fam == 'x86')
+elif (
+    fam == 'arc'
+    or fam == 'arm'
+    or fam == 'mips'
+    or fam == 'ppc'
+    or fam == 'riscv32'
+    or fam == 'sparc'
+    or fam == 'x86'
+)
     pw_file = 'ipmi_pass_32'
 else
     error('unknown target architecture')
