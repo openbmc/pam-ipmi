@@ -295,6 +295,7 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	unsigned int maclen = 0;
 	size_t writtensize = 0;
 	unsigned int keylen = 0;
+	size_t computed_keylen = 0;
 	metapassstruct pwmp = { META_PASSWD_SIG, { 0, 0 }, .0, 0, 0, 0, 0 };
 	unsigned char mac[EVP_MAX_MD_SIZE] = { 0 };
 	unsigned char key[EVP_MAX_KEY_LENGTH];
@@ -403,9 +404,29 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 			}
 
 			// First get the hashed key to decrypt
-			HMAC(digest, keybuff, keybuffsize,
-			     opwfilebuff + sizeof(*opwmp), opwmp->hashsize, key,
-			     &keylen);
+			// FIPS requires a minimum HMAC key size of 112 bits
+			// while this application has a 64 bit key.  Use the
+			// "fips=no" property to select a non-FIPS provider
+			// needed to perform this HMAC operation.  This usage
+			// is not FIPS compliant.
+			if (EVP_Q_mac(NULL, "HMAC", "fips=no", "SHA256", NULL,
+				      keybuff, keybuffsize,
+				      opwfilebuff + sizeof(*opwmp),
+				      opwmp->hashsize, key, sizeof(key),
+				      &computed_keylen) == NULL) {
+				pam_syslog(
+					pamh, LOG_ERR,
+					"EVP_Q_mac failed getting hash key to decrypt");
+				err = 1;
+				goto done;
+			}
+			keylen = EVP_MD_get_size(digest);
+			if (computed_keylen != keylen) {
+				pam_syslog(pamh, LOG_ERR,
+					   "Unexpected EVP_Q_mac outlen for decrypt");
+				err = 1;
+				goto done;
+			}
 
 			unsigned int tmpmacsize = opwmp->macsize;
 			// Skip decryption if there is no data
@@ -505,8 +526,26 @@ int update_pass_special_file(const pam_handle_t *pamh, const char *keyfilename,
 	}
 
 	// Generate hash key, which will be used for encryption.
-	HMAC(digest, keybuff, keybuffsize, hash, EVP_MD_block_size(digest), key,
-	     &keylen);
+	// FIPS requires a minimum HMAC key size of 112 bits while this
+	// application has a 64 bit key.  Use the "fips=no" property to select
+	// a non-FIPS provider needed to perform this HMAC operation.  This
+	// usage is not FIPS compliant.
+	if (EVP_Q_mac(NULL, "HMAC", "fips=no", "SHA256", NULL, keybuff,
+		      keybuffsize, hash, EVP_MD_block_size(digest), key,
+		      sizeof(key), &computed_keylen) == NULL) {
+		pam_syslog(pamh, LOG_ERR,
+			   "EVP_Q_mac failed getting hash key to encrypt");
+		err = 1;
+		goto done;
+	}
+	keylen = EVP_MD_get_size(digest);
+	if (computed_keylen != keylen) {
+		pam_syslog(pamh, LOG_ERR,
+			   "Unexpected EVP_Q_mac outlen for encrypt");
+		err = 1;
+		goto done;
+	}
+
 	// Generate IV values
 	if (RAND_bytes(iv, EVP_CIPHER_iv_length(cipher)) != 1) {
 		pam_syslog(pamh, LOG_DEBUG,
