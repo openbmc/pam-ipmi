@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c6bb5b8_bab3420f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000235
+      },
+      "writtenOn": "2026-04-10T17:06:13Z",
+      "side": 1,
+      "message": "The build failure was a wrong pointer type (int / size_t) in EVP_Q_mac parm 12 (\u0026keylen).",
+      "revId": "f2e4ac7a5d62972de00c7ac7226ae55182988e0e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
