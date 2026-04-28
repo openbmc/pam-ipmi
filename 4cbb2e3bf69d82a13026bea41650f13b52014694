@@ -16,6 +16,23 @@
       "message": "The failure appear unrelated to the commit.  Excerpts:\nFormatting code\nunder /data0/jenkins/workspace/ci-repository/openbmc/pam-ipmiast_grep: cannot\nfind config .astgrep/sgconfig.yml    markdownlint:\ncannot find .markdownlint.yaml; using\n/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/config/markdownlint.yaml    prettier: cannot\nfind .prettierrc.yaml; using\n/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/config/prettierrc.yaml…    commit_spelling -\nFAILED    Running\nclang_format (Ubuntu clang-format version 21.1.8\n(++20251212115320+2078da43e25a-1~exp1~20251212115344.67))    Running clang_tidy\n(openbmc-build-scripts: 4cbb2e3bf69d82a13026bea41650f13b52014694)    Running\nmarkdownlint (0.48.0)    Running meson\n(1.10.1)    Running prettier\n(3.8.2)README.mdREADME.md 25ms (unchanged)commit_spelling: FAILED (see prior failure)Traceback (most recent call last):  File \"/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/scripts/unit-test.py\",\nline 1405, in \u003cmodule\u003e    check_call_cmd(    ~~~~~~~~~~~~~~^        os.path.join(        ^^^^^^^^^^^^^    ...\u003c2\nlines\u003e...        CODE_SCAN_DIR,        ^^^^^^^^^^^^^^    )    ^  File \"/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/scripts/unit-test.py\",\nline 241, in check_call_cmd    check_call(cmd,\n**kwargs)    ~~~~~~~~~~^^^^^^^^^^^^^^^  File \"/usr/lib/python3.13/subprocess.py\",\nline 419, in check_call    raise\nCalledProcessError(retcode, cmd)subprocess.CalledProcessError: Command\n\u0027(\u0027/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/scripts/format-code.sh\u0027,\n\u0027/data0/jenkins/workspace/ci-repository/openbmc/pam-ipmi\u0027)\u0027 returned non-zero\nexit status 1.Traceback (most recent call last):  File \"/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/scripts/dbus-unit-test.py\",\nline 109, in \u003cmodule\u003e    check_call(UNIT_TEST.split(\",\"),\nenv\u003dos.environ)    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File \"/usr/lib/python3.13/subprocess.py\",\nline 419, in check_call    raise\nCalledProcessError(retcode, cmd)subprocess.CalledProcessError: Command\n\u0027[\u0027/data0/jenkins/workspace/ci-repository/openbmc/openbmc-build-scripts/scripts/unit-test.py\u0027,\n\u0027-w\u0027, \u0027/data0/jenkins/workspace/ci-repository/openbmc\u0027, \u0027-p\u0027, \u0027pam-ipmi\u0027, \u0027-b\u0027,\n\u0027master\u0027, \u0027-v\u0027]\u0027 returned non-zero exit status 1.Build step \u0027Execute shell\u0027 marked build as failureNew run name is \u0027#132171-Joseph Reynolds\u0027Finished: FAILURE",
       "revId": "4cbb2e3bf69d82a13026bea41650f13b52014694",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02048e13_483208a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000235
+      },
+      "writtenOn": "2026-04-28T15:45:20Z",
+      "side": 1,
+      "message": "This handles the password change function for IPMI users.  See related changes for password authentication here: https://gerrit.openbmc.org/c/openbmc/phosphor-net-ipmid/+/89728",
+      "revId": "4cbb2e3bf69d82a13026bea41650f13b52014694",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
