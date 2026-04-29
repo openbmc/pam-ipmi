@@ -33,6 +33,23 @@
       "message": "This handles the password change function for IPMI users.  See related changes for password authentication here: https://gerrit.openbmc.org/c/openbmc/phosphor-net-ipmid/+/89728",
       "revId": "4cbb2e3bf69d82a13026bea41650f13b52014694",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65eccf77_e6d913c1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000163
+      },
+      "writtenOn": "2026-04-29T17:31:02Z",
+      "side": 1,
+      "message": "I think I would prefer to just migrate to a better key size. I am rather fond of using https://www.freedesktop.org/software/systemd/man/latest/systemd-id128.html to generate unique (per system) app IDs. So we would generate a 128-bit random ID that stands in for ipmi password. Then, we call systemd-id128 to have it hmac the system\u0027s ID with our ID and return the value. This gives us a nice value to use with things like our own hmac key.\n\nThe migration could just be a script that runs at boot if a given file is present (the current key file). Then it does the transformation, using the new systemd-id128 key and deletes the old file. We will need to make changes to all the repos that access the user password files (this repo, ipmid. I think netipmi uses the library from ipmid.) Then after a while, we remove the migration script.",
+      "revId": "4cbb2e3bf69d82a13026bea41650f13b52014694",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
